@@ -1,7 +1,9 @@
-/* eslint-disable prettier/prettier */
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { CreateProductBody } from "src/dto/products/CreateProductBody.dto";
-import { GetProductsResponse } from "src/dto/products/GetProductsResponse.dto";
+import {
+    GetOneProductResponse,
+    GetProductsResponse,
+} from "src/dto/products/GetProductsResponse.dto";
 import { ProductsService } from "../services/products.service";
 
 @Controller("products")
@@ -18,8 +20,9 @@ export class ProductsController {
         return { products };
     }
     @Get(":id")
-    getOneProduct(@Param("id") prodId: string) {
-        return this.productsService.getOneProduct(prodId);
+    getOneProduct(@Param("id") prodId: string): GetOneProductResponse {
+        const product = this.productsService.getOneProduct(prodId);
+        return { product };
     }
     @Patch(":id")
     updateProduct(@Param("id") prodId: string, @Body() body: CreateProductBody) {
