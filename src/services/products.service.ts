@@ -1,35 +1,37 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Product } from "../models/products.model";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 @Injectable()
 export class ProductsService {
     products: Product[] = [];
-
-    addProduct(title: string, desc: string, price: number) {
-        const newProduct = new Product(Math.random().toString(), title, desc, price);
-        this.products.push(newProduct);
-
-        return newProduct;
+    constructor(@InjectModel("Product") private readonly productModel: Model<Product>) {}
+    async addProduct(title: string, description: string, price: number) {
+        const newProduct = new this.productModel({ title, description, price });
+        const result = await newProduct.save();
+        return result as Product;
     }
-    getAllProducts() {
-        return [...this.products];
+    async getAllProducts() {
+        const allProducts = await this.productModel.find();
+        return allProducts as Product[];
     }
-    getOneProduct(prodId: string) {
-        const { product } = this.findProduct(prodId);
-        return { ...product };
+    async getOneProduct(prodId: string) {
+        const product = await this.findProduct(prodId);
+        return product;
     }
     updateProduct(prodId: string, prodTitle: string, prodDescription: string, prodPrice: number) {
-        const { product, productIndex } = this.findProduct(prodId);
-        const updatedProduct = { ...product };
-        if (prodTitle) {
-            updatedProduct.title = prodTitle;
-        }
-        if (prodDescription) {
-            updatedProduct.description = prodDescription;
-        }
-        if (prodPrice) {
-            updatedProduct.price = prodPrice;
-        }
-        this.products[productIndex] = updatedProduct;
+        // const { product, productIndex } = this.findProduct(prodId);
+        // const updatedProduct = { ...product };
+        // if (prodTitle) {
+        //     updatedProduct.title = prodTitle;
+        // }
+        // if (prodDescription) {
+        //     updatedProduct.description = prodDescription;
+        // }
+        // if (prodPrice) {
+        //     updatedProduct.price = prodPrice;
+        // }
+        // this.products[productIndex] = updatedProduct;
     }
     deleteProduct(prodId: string) {
         const index = this.findProduct(prodId)[1];
@@ -40,12 +42,8 @@ export class ProductsService {
         const restOfProducts = this.products.splice(index, 1);
         this.products = restOfProducts;
     }
-    findProduct(id: string) {
-        const productIndex = this.products.findIndex(prod => prod.id === id);
-        const product = this.products[productIndex];
-        if (!productIndex) {
-            throw new NotFoundException("Not Found");
-        }
-        return { product, productIndex };
+    async findProduct(id: string): Promise<Product> {
+        const product = await this.productModel.findById(id);
+        return product;
     }
 }

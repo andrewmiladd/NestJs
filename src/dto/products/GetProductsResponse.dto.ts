@@ -1,8 +1,8 @@
 import { Product } from "src/models/products.model";
 
 export class GetProductsResponse {
-    public products: Product[];
+    public products: Promise<Product>;
 }
 export class GetOneProductResponse {
-    public product: Product;
+    public product: Promise<Product>;
 }
