@@ -4,7 +4,6 @@ import {
     GetOneProductResponse,
     GetProductsResponse,
 } from "src/dto/products/GetProductsResponse.dto";
-import { Product } from "src/models/products.model";
 import { ProductsService } from "../services/products.service";
 
 @Controller("products")
@@ -12,17 +11,22 @@ export class ProductsController {
     constructor(private productsService: ProductsService) {}
 
     @Post()
-    addProduct(@Body() body: CreateProductBody) {
-        return this.productsService.addProduct(body.title, body.description, body.price);
+    async addProduct(@Body() body: CreateProductBody): GetOneProductResponse["product"] {
+        const newProduct = await this.productsService.addProduct(
+            body.title,
+            body.description,
+            body.price
+        );
+        return newProduct;
     }
     @Get()
-    async getProducts() {
+    async getProducts(): GetProductsResponse["products"] {
         const products = await this.productsService.getAllProducts();
         return products;
     }
     @Get(":id")
-    getOneProduct(@Param("id") prodId: string): Promise<Product> {
-        const product = this.productsService.getOneProduct(prodId);
+    async getOneProduct(@Param("id") prodId: string): GetOneProductResponse["product"] {
+        const product = await this.productsService.getOneProduct(prodId);
         return product;
     }
     @Patch(":id")
