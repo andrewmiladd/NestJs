@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Product } from "../models/products.model";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -19,28 +19,28 @@ export class ProductsService {
         const product = await this.findProduct(prodId);
         return product;
     }
-    updateProduct(prodId: string, prodTitle: string, prodDescription: string, prodPrice: number) {
-        // const { product, productIndex } = this.findProduct(prodId);
-        // const updatedProduct = { ...product };
-        // if (prodTitle) {
-        //     updatedProduct.title = prodTitle;
-        // }
-        // if (prodDescription) {
-        //     updatedProduct.description = prodDescription;
-        // }
-        // if (prodPrice) {
-        //     updatedProduct.price = prodPrice;
-        // }
-        // this.products[productIndex] = updatedProduct;
+    async updateProduct(
+        prodId: string,
+        prodTitle: string,
+        prodDescription: string,
+        prodPrice: number
+    ) {
+        const updatedProduct = await this.findProduct(prodId);
+        if (prodTitle) {
+            updatedProduct.title = prodTitle;
+        }
+        if (prodDescription) {
+            updatedProduct.description = prodDescription;
+        }
+        if (prodPrice) {
+            updatedProduct.price = prodPrice;
+        }
+        updatedProduct.save();
+        return updatedProduct;
     }
-    deleteProduct(prodId: string) {
-        const index = this.findProduct(prodId)[1];
-        // const restOfProducts = this.products.filter(
-        //   (product) => product.id != this.products[index].id,
-        // );
-        // this.products = restOfProducts;
-        const restOfProducts = this.products.splice(index, 1);
-        this.products = restOfProducts;
+    async deleteProduct(prodId: string): Promise<Product> {
+        const deletedProduct = await this.findProduct(prodId);
+        return deletedProduct.delete();
     }
     async findProduct(id: string): Promise<Product> {
         const product = await this.productModel.findById(id);
