@@ -12,11 +12,7 @@ export class ProductsController {
 
     @Post()
     async addProduct(@Body() body: CreateProductBody): GetOneProductResponse["product"] {
-        const newProduct = await this.productsService.addProduct(
-            body.title,
-            body.description,
-            body.price
-        );
+        const newProduct = await this.productsService.createProduct(body);
         return newProduct;
     }
     @Get()
