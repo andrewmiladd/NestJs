@@ -1,6 +1,14 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString, MaxLength, Min } from "class-validator";
 export class CreateProductBody {
-    @IsString() public title: string;
-    @IsString() public description: string;
-    @IsNumber() public price: number;
+    @IsString()
+    @MaxLength(100)
+    public title: string;
+
+    @IsString()
+    @IsOptional()
+    public description: string;
+
+    @IsNumber()
+    @Min(0)
+    public price: number;
 }
