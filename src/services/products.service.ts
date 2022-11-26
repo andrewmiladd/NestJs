@@ -26,21 +26,16 @@ export class ProductsService {
         return product;
     }
 
-    async updateProduct(
-        prodId: string,
-        prodTitle: string,
-        prodDescription: string,
-        prodPrice: number
-    ) {
-        const updatedProduct = await this.productModel.findById(prodId);
-        if (prodTitle) {
-            updatedProduct.title = prodTitle;
+    async updateProduct(id: string, body: CreateProductBody) {
+        const updatedProduct = await this.productModel.findById(id);
+        if (body.title) {
+            updatedProduct.title = body.title;
         }
-        if (prodDescription) {
-            updatedProduct.description = prodDescription;
+        if (body.description) {
+            updatedProduct.description = body.description;
         }
-        if (prodPrice) {
-            updatedProduct.price = prodPrice;
+        if (body.price) {
+            updatedProduct.price = body.price;
         }
         updatedProduct.save();
         return updatedProduct;
