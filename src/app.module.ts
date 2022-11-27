@@ -7,14 +7,10 @@ import { ProductSchema } from "./models/products.model";
 import { AppService } from "./services/app.service";
 import { ProductsService } from "./services/products.service";
 
-const databaseConnection = `mongodb+srv://andrewmiladd:Mokey1998xx@cluster0.otdkquu.mongodb.net/first-test?retryWrites=true&w=majority`;
 @Module({
     imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            envFilePath: "../.env",
-        }),
-        MongooseModule.forRoot(databaseConnection),
+        ConfigModule.forRoot(),
+        MongooseModule.forRoot(process.env.MY_MONGODB),
         MongooseModule.forFeature([{ name: "Product", schema: ProductSchema }]),
     ],
     controllers: [AppController, ProductsController],
